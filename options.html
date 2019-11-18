@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Issue redirect options</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body class="nx-gitlab-ex-options">
+    <form>
+        <div class="form-group">
+            <label for="urlPattern">GitLab URL pattern</label>
+            <input type="email" class="form-control" id="urlPattern" aria-describedby="urlPatternHelp">
+            <small id="urlPatternHelp" class="form-text text-muted">Plugin will run on pages matched this pattern</small>
+            <div class="invalid-feedback">
+                Field is required
+            </div>
+        </div>
+        <div class="btn btn-primary" id="save">Save</button>
+    </form>
+
+    <script src="options.js"></script>
+</body>
+
+</html>

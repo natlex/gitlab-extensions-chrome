@@ -1,0 +1,32 @@
+.nex-panel {
+    position: fixed;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    z-index: 10000;
+    padding: 5px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.nex-panel-row {
+    padding-bottom: 5px;
+    text-align: right;
+}
+
+.nex-panel-row:last-child {
+    padding-bottom: 0;
+}
+
+.nex-panel-row .btn {
+    width: 35px;
+}
+
+.nex-panel-row-separator {
+    border-bottom: 1px solid #e5e5e5;
+    margin: 0 -5px 5px -5px;
+}
+
+.nex-block-name {
+    padding-right: 10px;
+}

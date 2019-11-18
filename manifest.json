@@ -1,0 +1,29 @@
+{
+	"manifest_version": 2,
+    "name": "Natlex GitLab Extensions",
+    "version": "2.0.0",
+
+	"description": "UI extensions for GitLab",
+    "icons": {
+        "16": "icons/icon-16x16.png",
+        "32": "icons/icon-32x32.png",
+        "48": "icons/icon-48x48.png",
+        "128": "icons/icon-128x128.png"
+    },
+    
+    "permissions": ["activeTab", "storage"],
+
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true,
+        "open_in_tab": false
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "css": ["gitlab-content.css"],
+            "js": ["gitlab-content.js"]
+        }
+    ]
+}

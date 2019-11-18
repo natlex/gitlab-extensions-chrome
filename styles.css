@@ -1,0 +1,12 @@
+.nx-gitlab-ex-options {
+    width: 500px;
+    padding: 20px;
+}
+
+.nx-gitlab-ex-options .btn {
+    cursor: pointer;
+}
+
+.nx-gitlab-ex-options .form-control.is-invalid~#urlPatternHelp {
+    display: none;
+}

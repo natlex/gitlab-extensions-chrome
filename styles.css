@@ -10,3 +10,7 @@
 .nx-gitlab-ex-options .form-control.is-invalid~#urlPatternHelp {
     display: none;
 }
+
+.nx-direction-selector .btn {
+    min-width: 80px;
+}

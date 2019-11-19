@@ -1,4 +1,6 @@
 (function() {
+    const COMMENTS_BUTTON_SIZE = 40;
+
     function initComments() {
         let commentsPanelInLoad = false;
         let lockClick = false;
@@ -117,7 +119,11 @@
         function refreshPanelContent(panelElement) {
             if (getAllUserNames().length) {
                 commentsPanelInLoad = false;
-                showCommentsButton(panelElement);                
+                if (commentsPanelExpanded) {
+                    showCommentsNavigation(panelElement);
+                } else {
+                    showCommentsButton(panelElement);
+                }
             } else if (!panelElement.hasChildNodes() || panelElement.firstChild.tagName === "I") {
                 setTimeout(function() {
                     if (!commentsPanelInLoad) {
@@ -153,31 +159,37 @@
                 pos2 = pos4 - e.clientY;
                 pos3 = e.clientX;
                 pos4 = e.clientY;
-    
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-                element.style.right = null;
-                element.style.bottom = null;
-                // element.style.top = null;
-                // element.style.left = null;
-                // element.style.right = window.screen.width - (element.offsetWidth + element.offsetLeft - pos1) + "px";
-                // element.style.bottom = window.screen.height - (element.offsetHeight + element.offsetTop - pos2) + "px";
+
+                commentsPanelPosition.top = commentsPanelPosition.top ? commentsPanelPosition.top - pos2 : null;
+                commentsPanelPosition.bottom = commentsPanelPosition.bottom ? commentsPanelPosition.bottom + pos2 : null;
+                commentsPanelPosition.left = commentsPanelPosition.left ? commentsPanelPosition.left - pos1 : null;
+                commentsPanelPosition.right = commentsPanelPosition.right ? commentsPanelPosition.right + pos1 : null;
+                setCommentsPanelPosition(element);
             }
           
             function closeDragElement(e) {
                 e = e || window.event;
                 e.preventDefault();
 
+                chrome.storage.sync.set({
+                    commentsPanelPosition
+                });
+
                 document.onmouseup = null;
                 document.onmousemove = null;
             }
+        }
+
+        function setCommentsPanelPosition(element) {
+            Object.keys(commentsPanelPosition).forEach(key => {
+                element.style[key] = commentsPanelPosition[key] ? `${commentsPanelPosition[key]}px` : null;
+            });
         }
     
         function createPanel() {
             let panelElement = document.createElement("div");
             panelElement.classList.add("nex-panel");
-            panelElement.style.right = "700px";
-            panelElement.style.bottom = "10px";
+            setCommentsPanelPosition(panelElement);
             refreshPanelContent(panelElement);
             enableElementDrag(panelElement);
             return panelElement;
@@ -187,10 +199,44 @@
         contentElement[0].appendChild(createPanel());
     }
 
-    chrome.storage.sync.get("urlPattern", function(data) {
+    let commentsPanelDirection;
+    let commentsPanelPosition;
+    let commentsPanelExpanded;
+
+    function validateDirection(data) {
+        data = data || {};
+        const verticalValid = ["top", "bottom"].reduce((res, curr) => res + (data[curr] ? 1 : 0), 0);
+        const horizontalValid = ["left", "right"].reduce((res, curr) => res + (data[curr] ? 1 : 0), 0);
+        if (verticalValid !== 1 || horizontalValid !== 1) {
+            data = { top: true, left: true };
+        }
+        return data;
+    }
+
+    function validatePosition(data, ) {
+        data = data || {};
+        const verticalValid = ["top", "bottom"].reduce((res, curr) => res + (data[curr] ? 1 : 0), 0);
+        const horizontalValid = ["left", "right"].reduce((res, curr) => res + (data[curr] ? 1 : 0), 0);
+        if (verticalValid !== 1 || horizontalValid !== 1) {
+            data = { bottom: 10, right: 300 };
+        }
+        data.top = commentsPanelDirection.top ? null : (data.top || (data.bottom - COMMENTS_BUTTON_SIZE));
+        data.bottom = commentsPanelDirection.bottom ? null : (data.bottom || (data.top + COMMENTS_BUTTON_SIZE));
+        data.left = commentsPanelDirection.left ? null : (data.left || (data.right - COMMENTS_BUTTON_SIZE));
+        data.right = commentsPanelDirection.right ? null : (data.right || (data.left + COMMENTS_BUTTON_SIZE));
+        return data;
+    }
+
+    chrome.storage.sync.get(["urlPattern", "commentsPanelDirection", "commentsPanelExpanded", "commentsPanelPosition"], function(data) {
         let urlPattern = data && data.urlPattern || "https://gitlab.*";
         if (urlPattern[urlPattern.length - 1] !== "/") urlPattern += "/";
         urlPattern += "merge_requests\/.+";
+
+        commentsPanelExpanded = data && data.commentsPanelExpanded || false;
+        commentsPanelDirection = validateDirection(data && data.commentsPanelDirection);
+        commentsPanelPosition = validatePosition(data && data.commentsPanelPosition);
+
+        console.log(commentsPanelExpanded, commentsPanelDirection, commentsPanelPosition)
 
         const url = window.location.href;
         if (url.match(urlPattern)) {

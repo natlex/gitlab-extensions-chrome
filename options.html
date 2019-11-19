@@ -16,7 +16,30 @@
                 Field is required
             </div>
         </div>
-        <div class="btn btn-primary" id="save">Save</button>
+
+        <div class="form-group">
+            <label for="urlPattern">Comments panel direction</label>
+
+            <div class="nx-direction-selector">
+                <div class="btn-group">
+                    <div class="btn btn-secondary" id="comments-vert-top">Top</div>
+                    <div class="btn btn-secondary" id="comments-vert-bottom">Bottom</div>
+                </div>
+                <div class="btn-group">
+                    <div class="btn btn-secondary" id="comments-horiz-left">Left</div>
+                    <div class="btn btn-secondary" id="comments-horiz-right">Right</div>
+                </div>
+            </div>
+            <div>
+                <input type="checkbox" class="form-check-input" id="comments-expanded-by-default">
+                <label class="form-check-label" for="comments-expanded-by-default">Comments panel expanded by default</label>
+            </div>
+
+            <small id="urlPatternHelp" class="form-text text-muted">Panel will be expanded in this direction</small>
+        </div>
+
+        <div class="btn btn-primary" id="save">Save</div>
+        <div class="btn btn-light" style="float: right;" id="reset-comments-position">Reset comments position</div>
     </form>
 
     <script src="options.js"></script>

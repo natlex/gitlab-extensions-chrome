@@ -4,6 +4,7 @@
     function initComments() {
         let commentsPanelInLoad = false;
         let lockClick = false;
+        let commentsPanelElement;
 
         function getAllUserNames() {
             return [...new Set([...document.querySelectorAll("a[data-username]")].filter(el => !!el.closest(".note-wrapper")).map(el => el.dataset.username))];
@@ -83,8 +84,9 @@
             return separatorElement;
         }
 
-        function showCommentsButton(panelElement) {
-            panelElement.innerHTML = "";
+        function showCommentsButton(contentElement) {
+            commentsPanelElement.classList.remove('expanded');
+            contentElement.innerHTML = "";
             const commentsButton = document.createElement("i");
             commentsButton.classList.add("fa", "fa-comments", "fa-2x", "nx-i-btn");
             commentsButton.style.cursor = "pointer";
@@ -93,18 +95,19 @@
                     lockClick = false;
                     return;
                 }
-                showCommentsNavigation(panelElement);
+                showCommentsNavigation(contentElement);
             }
-            panelElement.appendChild(commentsButton);
+            contentElement.appendChild(commentsButton);
         }
 
-        function showCommentsNavigation(panelElement) {
-            panelElement.innerHTML = "";
-            panelElement.appendChild(createNavigationBlock("Resolved", () => {
+        function showCommentsNavigation(contentElement) {
+            commentsPanelElement.classList.add('expanded');
+            contentElement.innerHTML = "";
+            contentElement.appendChild(createNavigationBlock("Resolved", () => {
                 return [...document.querySelectorAll("div.js-discussion-headline")]
                     .filter(el => el.innerText.startsWith("Resolved"));
             }));
-            panelElement.appendChild(createNavigationBlock("Unresolved", () => {
+            contentElement.appendChild(createNavigationBlock("Unresolved", () => {
                 return [...document.querySelectorAll("li.note-discussion")]
                     .filter(el => {
                         const headlineElement = el.querySelector("div.js-discussion-headline");
@@ -112,25 +115,25 @@
                     })
                     .map(el => el.querySelector("a.js-user-link"));
             }));
-            panelElement.appendChild(createBlockSeparator());
-            getAllUserNames().forEach(userName => panelElement.appendChild(createUserBlock(userName)));
+            contentElement.appendChild(createBlockSeparator());
+            getAllUserNames().forEach(userName => contentElement.appendChild(createUserBlock(userName)));
         }
     
-        function refreshPanelContent(panelElement) {
+        function refreshPanelContent(contentElement) {
             if (getAllUserNames().length) {
                 commentsPanelInLoad = false;
                 if (commentsPanelExpanded) {
-                    showCommentsNavigation(panelElement);
+                    showCommentsNavigation(contentElement);
                 } else {
-                    showCommentsButton(panelElement);
+                    showCommentsButton(contentElement);
                 }
-            } else if (!panelElement.hasChildNodes() || panelElement.firstChild.tagName === "I") {
+            } else if (!contentElement.hasChildNodes() || contentElement.firstChild.tagName === "I") {
                 setTimeout(function() {
                     if (!commentsPanelInLoad) {
                         commentsPanelInLoad = true;
-                        panelElement.innerHTML = `<i class="fa fa-spinner fa-2x fa-spin"></i>`;
+                        contentElement.innerHTML = `<i class="fa fa-spinner fa-2x fa-spin"></i>`;
                     }
-                    refreshPanelContent(panelElement);
+                    refreshPanelContent(contentElement);
                 }, 250);
             }
         }
@@ -185,18 +188,36 @@
                 element.style[key] = commentsPanelPosition[key] ? `${commentsPanelPosition[key]}px` : null;
             });
         }
+
+        function appendUtilButtons(panelElement, contentElement) {
+            const scrollTopBtn = document.createElement("div");
+            scrollTopBtn.classList.add("util-btn", "scroll-top-btn");
+            scrollTopBtn.title = 'Scroll top';
+            scrollTopBtn.onclick = function() { window.scrollTo(0, 0); }
+            panelElement.appendChild(scrollTopBtn);
+
+            const collapseBtn = document.createElement("div");
+            collapseBtn.classList.add("util-btn", "collapse-btn");
+            collapseBtn.title = 'Collapse';
+            collapseBtn.onclick = function() { showCommentsButton(contentElement); }
+            panelElement.appendChild(collapseBtn);
+        }
     
         function createPanel() {
-            let panelElement = document.createElement("div");
+            const panelElement = document.createElement("div");
             panelElement.classList.add("nex-panel");
+            const contentElement = document.createElement("div");
+            panelElement.appendChild(contentElement);
             setCommentsPanelPosition(panelElement);
-            refreshPanelContent(panelElement);
+            refreshPanelContent(contentElement);
             enableElementDrag(panelElement);
+            appendUtilButtons(panelElement, contentElement);
             return panelElement;
         }
     
-        const contentElement = document.getElementsByClassName("content-wrapper");
-        contentElement[0].appendChild(createPanel());
+        const wrapperElement = document.getElementsByClassName("content-wrapper");
+        commentsPanelElement = createPanel();
+        wrapperElement[0].appendChild(commentsPanelElement);
     }
 
     let commentsPanelDirection;
@@ -235,8 +256,6 @@
         commentsPanelExpanded = data && data.commentsPanelExpanded || false;
         commentsPanelDirection = validateDirection(data && data.commentsPanelDirection);
         commentsPanelPosition = validatePosition(data && data.commentsPanelPosition);
-
-        console.log(commentsPanelExpanded, commentsPanelDirection, commentsPanelPosition)
 
         const url = window.location.href;
         if (url.match(urlPattern)) {

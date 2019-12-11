@@ -3,9 +3,10 @@
     background-color: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 0.25rem;
+    border-top-right-radius: 0;
     z-index: 10000;
     padding: 5px;
-    min-width: 40px;
+    min-width: 50px;
     text-align: center;
 }
 
@@ -29,4 +30,44 @@
 
 .nex-block-name {
     padding-right: 10px;
+}
+
+.util-btn {
+    position: absolute;
+    font-size: 12px;
+    top: -20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: 1px solid #e5e5e5;
+    background-color: #fff;
+}
+
+.util-btn.scroll-top-btn {
+    right: -1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.util-btn.scroll-top-btn::before {
+    content: '\25B2';
+}
+
+.nex-panel.expanded .util-btn.scroll-top-btn {
+    border-top-left-radius: 0;
+}
+
+.util-btn.collapse-btn {
+    display: none;
+    right: 19px;
+    border-right: 0;
+    border-top-left-radius: 3px;
+}
+
+.util-btn.collapse-btn::before {
+    content: '\25BC';
+}
+
+.nex-panel.expanded .util-btn.collapse-btn {
+    display: block;
 }

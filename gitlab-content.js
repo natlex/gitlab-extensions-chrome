@@ -87,9 +87,13 @@
         function showCommentsButton(contentElement) {
             commentsPanelElement.classList.remove('expanded');
             contentElement.innerHTML = "";
-            const commentsButton = document.createElement("i");
-            commentsButton.classList.add("fa", "fa-comments", "fa-2x", "nx-i-btn");
-            commentsButton.style.cursor = "pointer";
+            const commentsButton = document.createElement("div");
+            commentsButton.classList.add("nx-comments-btn");
+            commentsButton.innerHTML = "&#x1F5E8;";
+            commentsButton.style.fontSize = "20px";
+            commentsButton.style.height = "35px";
+            commentsButton.style.lineHeight = "35px";
+            commentsButton.style.marginLeft = "-5px";
             commentsButton.onclick = function(e) {
                 if (lockClick) {
                     lockClick = false;
